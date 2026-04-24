@@ -4,8 +4,7 @@ import { UpdateNotificationDto } from './dto/update-notification.dto';
 import { Notification } from './entities/notification.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from 'src/user/entities/user.entity';
-import { NotificationStrategyFactory } from './strategies/notification-strategy.factory';
+import { User } from '../user/entities/user.entity';
 import { NotificationDispatcher } from './notification.dispatcher';
 
 @Injectable()
@@ -13,7 +12,7 @@ export class NotificationService {
   constructor(
     @InjectRepository(Notification)
     private readonly notificationRepository: Repository<Notification>,
-    //private readonly strategyFactory: NotificationStrategyFactory,
+  
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly dispatcher: NotificationDispatcher,
