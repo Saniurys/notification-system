@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  api:
+    volumes:
+        - .:/usr/src/app            # Sincroniza tu código (si ya lo haces)
+        - ./coverage-e2e:/usr/src/app/coverage-e2e # Mapea la carpeta de coverage
+    command: >
+      sh -c "npm run test:e2e -- --coverage && tail -f /dev/null"
+    depends_on:
+      - db_test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3002:3000
+    environment:
+      - NODE_ENV=test
+      - DB_HOST=db_test
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=notification_db_test
+      - DATABASE_SYNC=true
+      - JWT_SECRET=super-secret-key
+    restart: "no" #restart: unless-stopped
+
+  db_test:
+    image: postgres:15
+    container_name: notification_db_test
+    ports:
+      - 3333:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: notification_db_test
+    volumes:
+      - postgres_data:/var/lib/postgresql/datatest
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

@@ -1,0 +1,38 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sh -c "npm run start:dev"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - db_dev
+    ports:
+      - "3003:3000"
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db_dev
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=notification_db
+      - DATABASE_SYNC=true
+    restart: unless-stopped
+
+  db_dev: # Cambié "postgres" a "db" para que coincida con DATABASE_HOST=db
+    image: postgres:15-alpine
+    container_name: notification_db_dev
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres # Coincide con la API
+      POSTGRES_DB: notification_db # Coincide con la API
+    ports:
+      - "2222:5432" # Accedes desde tu PC por el 2222
+    volumes:
+      - postgres_data:/var/lib/postgresql/datadev
+    restart: always
+
+volumes:
+  postgres_data:
