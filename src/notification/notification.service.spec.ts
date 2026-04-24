@@ -2,7 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotificationService } from './notification.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
-import { NotificationStrategyFactory } from './strategies/notification-strategy.factory';
+import { User } from '../user/entities/user.entity';
+import { NotificationDispatcher } from './notification.dispatcher';
 
 describe('NotificationService', () => {
   let service: NotificationService;
@@ -12,14 +13,16 @@ describe('NotificationService', () => {
     save: jest.fn(),
     find: jest.fn(),
     findOne: jest.fn(),
+    findOneBy: jest.fn(),
     remove: jest.fn(),
   };
 
-  const mockStrategyFactory = {
-    getStrategy: jest.fn().mockReturnValue({
-      validate: jest.fn(),
-      send: jest.fn(),
-    }),
+  const mockUserRepository = {
+    findOneBy: jest.fn(),
+  };
+
+  const mockDispatcher = {
+    dispatch: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -27,7 +30,8 @@ describe('NotificationService', () => {
       providers: [
         NotificationService,
         { provide: getRepositoryToken(Notification), useValue: mockNotificationRepository },
-        { provide: NotificationStrategyFactory, useValue: mockStrategyFactory },
+        { provide: getRepositoryToken(User), useValue: mockUserRepository },
+        { provide: NotificationDispatcher, useValue: mockDispatcher },
       ],
     }).compile();
 
@@ -38,5 +42,4 @@ describe('NotificationService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-  
 });
