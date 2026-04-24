@@ -24,7 +24,7 @@
     "seed:run": "ts-node src/database/seeds/seed.ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:create": "typeorm-ts-node-commonjs migration:create",
-    "test:coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls"
+    "test:coveralls": "npm run test:cov && coveralls < ./coverage/lcov.info"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
